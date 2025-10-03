@@ -1,0 +1,12 @@
+import { Router } from "express";
+import multer from "multer";
+const upload = multer();
+import * as fileManagerController from "../controller/file-manager.controller";
+const router = Router({ caseSensitive: true });
+router.post("/upload", upload.array('files'), fileManagerController.uploadPost);
+router.patch("/change-filename", fileManagerController.changeFilename);
+router.post("/create-folder", fileManagerController.createFolder);
+router.get("/get-folder", fileManagerController.getFolder);
+router.delete("/delete-file", fileManagerController.deleteFile);
+router.delete("/delete-folder", fileManagerController.deleteFolder);
+export default router;
