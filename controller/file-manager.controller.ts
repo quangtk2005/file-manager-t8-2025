@@ -1,10 +1,8 @@
 import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
-import { fileTypeFromBuffer } from 'file-type';
+import { lookup } from 'mime-types';
 import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const getUniqueFilename = (filePath: string): string => {
   if (!fs.existsSync(filePath)) return filePath;
@@ -40,14 +38,17 @@ export const uploadPost = async (req: Request, res: Response) => {
 
     fs.writeFileSync(savePath, file.buffer);
 
-    const fileType = await fileTypeFromBuffer(file.buffer)
+    // Sử dụng mime-types thay vì file-type
+    const fileExtension = path.extname(filename).toLowerCase();
+    const detectedMimeType = lookup(fileExtension) || file.mimetype;
+    const fileType = fileExtension.replace('.', '');
 
     saveLinks.push({
       folder: `/media${folder_path ? `/${folder_path}` : ""}`,
       filename: path.basename(savePath),
       mimetype: file.mimetype,
       size: file.size,
-      filetype: fileType?.ext
+      filetype: fileType
     })
   }
 

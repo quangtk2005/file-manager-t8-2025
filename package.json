@@ -1,8 +1,7 @@
 {
   "name": "file-manager",
   "version": "1.0.0",
-  "main": "fs-extra.js",
-  "type": "module",
+  "main": "index.ts",
   "scripts": {
     "start": "nodemon --exec \"npx tsx\" index.ts",
     "build": "tsc && node fs-extra.cjs",
@@ -13,10 +12,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/mime-types": "^3.0.1",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
-    "file-type": "^21.0.0",
+    "file-type": "^16.5.4",
     "fs-extra": "^11.3.2",
+    "mime-types": "^3.0.1",
     "multer": "^2.0.2"
   },
   "devDependencies": {

@@ -1,14 +1,15 @@
-import express from "express";
-import "dotenv/config";
-import indexRoutes from "./routers/index.routes";
-import { fileURLToPath } from "url";
-import path from "path";
-const app = express();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+require("dotenv/config");
+const index_routes_1 = __importDefault(require("./routers/index.routes"));
+const app = (0, express_1.default)();
 const port = parseInt(process.env.PORT) || 3000;
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(express.json());
-app.use(indexRoutes);
+app.use(express_1.default.json());
+app.use(index_routes_1.default);
 app.listen(port, () => {
     console.log(`Website đang chạy trên cổng ${port}`);
 });
