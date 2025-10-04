@@ -41,7 +41,6 @@ const file_manager_routes_1 = __importDefault(require("./file-manager.routes"));
 const media_routes_1 = __importDefault(require("./media.routes"));
 const middleware = __importStar(require("../middlewares/domain.middleware"));
 const router = (0, express_1.Router)();
-router.use(middleware.checkDomain);
 router.use("/file-manager", file_manager_routes_1.default);
-router.use("/media", media_routes_1.default);
+router.use("/media", middleware.checkDomain, media_routes_1.default);
 exports.default = router;
