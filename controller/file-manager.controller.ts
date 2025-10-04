@@ -23,41 +23,52 @@ const getUniqueFilename = (filePath: string): string => {
 };
 
 export const uploadPost = async (req: Request, res: Response) => {
-  const files = req.files as any;
-  let saveLinks: any = []
+  try {
+    const files = req.files as any;
+    let saveLinks: any = []
+    let errorFiles: any = []
+    const { folder_path } = req.query;
+    const folderPath = path.join(__dirname, '../media', folder_path as string || "");
+    for await (const file of files) {
+      let filename = file.originalname;
+      filename = Buffer.from(filename, 'latin1').toString('utf8');
+      filename = Buffer.from(filename, 'latin1').toString('utf8');
 
-  const { folder_path } = req.query;
-  const folderPath = path.join(__dirname, '../media', folder_path as string || "");
-  for await (const file of files) {
-    let filename = file.originalname;
-    filename = Buffer.from(filename, 'latin1').toString('utf8');
-    filename = Buffer.from(filename, 'latin1').toString('utf8');
+      const initialPath = path.join(folderPath, filename);
+      const savePath = getUniqueFilename(initialPath);
 
-    const initialPath = path.join(folderPath, filename);
-    const savePath = getUniqueFilename(initialPath);
+      try {
+        fs.writeFileSync(savePath, file.buffer);
+        const fileExtension = path.extname(filename).toLowerCase();
+        const detectedMimeType = lookup(fileExtension) || file.mimetype;
+        const fileType = fileExtension.replace('.', '');
+  
+        saveLinks.push({
+          folder: `/media${folder_path ? `/${folder_path}` : ""}`,
+          filename: path.basename(savePath),
+          mimetype: file.mimetype,
+          size: file.size,
+          filetype: fileType,
+        })
+      } catch (error) {
+        errorFiles.push(file.originalname)
+      }
+    }
 
-    fs.writeFileSync(savePath, file.buffer);
 
-    // Sử dụng mime-types thay vì file-type
-    const fileExtension = path.extname(filename).toLowerCase();
-    const detectedMimeType = lookup(fileExtension) || file.mimetype;
-    const fileType = fileExtension.replace('.', '');
-
-    saveLinks.push({
-      folder: `/media${folder_path ? `/${folder_path}` : ""}`,
-      filename: path.basename(savePath),
-      mimetype: file.mimetype,
-      size: file.size,
-      filetype: fileType
+    res.json({
+      success: true,
+      message: "Upload thành công",
+      data: saveLinks,
+      errorFiles: errorFiles
+    })
+  } catch (error) {
+    res.json({
+      success: false,
+      message: "Upload thất bại"
     })
   }
 
-
-  res.json({
-    success: true,
-    message: "Upload thành công",
-    data: saveLinks
-  })
 }
 
 export const changeFilename = async (req: Request, res: Response) => {

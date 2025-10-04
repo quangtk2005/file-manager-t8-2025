@@ -39,46 +39,60 @@ const getUniqueFilename = (filePath) => {
 };
 const uploadPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, e_1, _b, _c;
-    const files = req.files;
-    let saveLinks = [];
-    const { folder_path } = req.query;
-    const folderPath = path_1.default.join(__dirname, '../media', folder_path || "");
     try {
-        for (var _d = true, files_1 = __asyncValues(files), files_1_1; files_1_1 = yield files_1.next(), _a = files_1_1.done, !_a; _d = true) {
-            _c = files_1_1.value;
-            _d = false;
-            const file = _c;
-            let filename = file.originalname;
-            filename = Buffer.from(filename, 'latin1').toString('utf8');
-            filename = Buffer.from(filename, 'latin1').toString('utf8');
-            const initialPath = path_1.default.join(folderPath, filename);
-            const savePath = getUniqueFilename(initialPath);
-            fs_1.default.writeFileSync(savePath, file.buffer);
-            // Sử dụng mime-types thay vì file-type
-            const fileExtension = path_1.default.extname(filename).toLowerCase();
-            const detectedMimeType = (0, mime_types_1.lookup)(fileExtension) || file.mimetype;
-            const fileType = fileExtension.replace('.', '');
-            saveLinks.push({
-                folder: `/media${folder_path ? `/${folder_path}` : ""}`,
-                filename: path_1.default.basename(savePath),
-                mimetype: file.mimetype,
-                size: file.size,
-                filetype: fileType
-            });
-        }
-    }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-    finally {
+        const files = req.files;
+        let saveLinks = [];
+        let errorFiles = [];
+        const { folder_path } = req.query;
+        const folderPath = path_1.default.join(__dirname, '../media', folder_path || "");
         try {
-            if (!_d && !_a && (_b = files_1.return)) yield _b.call(files_1);
+            for (var _d = true, files_1 = __asyncValues(files), files_1_1; files_1_1 = yield files_1.next(), _a = files_1_1.done, !_a; _d = true) {
+                _c = files_1_1.value;
+                _d = false;
+                const file = _c;
+                let filename = file.originalname;
+                filename = Buffer.from(filename, 'latin1').toString('utf8');
+                filename = Buffer.from(filename, 'latin1').toString('utf8');
+                const initialPath = path_1.default.join(folderPath, filename);
+                const savePath = getUniqueFilename(initialPath);
+                try {
+                    fs_1.default.writeFileSync(savePath, file.buffer);
+                    const fileExtension = path_1.default.extname(filename).toLowerCase();
+                    const detectedMimeType = (0, mime_types_1.lookup)(fileExtension) || file.mimetype;
+                    const fileType = fileExtension.replace('.', '');
+                    saveLinks.push({
+                        folder: `/media${folder_path ? `/${folder_path}` : ""}`,
+                        filename: path_1.default.basename(savePath),
+                        mimetype: file.mimetype,
+                        size: file.size,
+                        filetype: fileType,
+                    });
+                }
+                catch (error) {
+                    errorFiles.push(file.originalname);
+                }
+            }
         }
-        finally { if (e_1) throw e_1.error; }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (!_d && !_a && (_b = files_1.return)) yield _b.call(files_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        res.json({
+            success: true,
+            message: "Upload thành công",
+            data: saveLinks,
+            errorFiles: errorFiles
+        });
     }
-    res.json({
-        success: true,
-        message: "Upload thành công",
-        data: saveLinks
-    });
+    catch (error) {
+        res.json({
+            success: false,
+            message: "Upload thất bại"
+        });
+    }
 });
 exports.uploadPost = uploadPost;
 const changeFilename = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

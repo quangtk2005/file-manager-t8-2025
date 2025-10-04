@@ -15,7 +15,9 @@ const getFile = (req, res) => {
     //   });
     // }
     // const filename = req.params.filename;
-    const mediaPath = path_1.default.join(__dirname, "../media", path_1.default.posix.join(...dirname));
+    const isVercel = process.env.VERCEL === '1';
+    const basePath = isVercel ? '/tmp' : path_1.default.join(__dirname, "..");
+    const mediaPath = path_1.default.join(basePath, "media", path_1.default.posix.join(...dirname));
     res.sendFile(mediaPath);
 };
 exports.getFile = getFile;

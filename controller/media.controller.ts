@@ -14,7 +14,9 @@ export const getFile = (req: Request, res: Response) => {
   // }
 
   // const filename = req.params.filename;
-  const mediaPath = path.join(__dirname, "../media", path.posix.join(...dirname));
+  const isVercel = process.env.VERCEL === '1';
+  const basePath = isVercel ? '/tmp' : path.join(__dirname, "..");
+  const mediaPath = path.join(basePath, "media", path.posix.join(...dirname));
 
   res.sendFile(mediaPath);
 }
