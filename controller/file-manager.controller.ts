@@ -117,12 +117,12 @@ export const createFolder = async (req: Request, res: Response) => {
   const { name_folder, folder_path } = req.body;
 
 
-  const folderDir = path.join(__dirname, "..", folder_path, name_folder);
   try {
+    const folderDir = path.join(__dirname, "..", folder_path, name_folder.trim().replace(/\s+/g, ' '));
     if (fs.existsSync(folderDir)) {
       return res.json({
         success: false,
-        message: "Thư mục đã tồn tại!"
+        message: "Thư mục đã tồn tại"
       });
     }
     fs.mkdirSync(folderDir);
@@ -133,12 +133,9 @@ export const createFolder = async (req: Request, res: Response) => {
   } catch (error) {
     return res.json({
       success: false,
-      message: "Lỗi khi tạo thư mục!"
+      message: "Lỗi khi tạo thư mục"
     });
   }
-
-
-
 }
 
 const calculateFolderSize = (folderPath: string): { totalSize: number; fileCount: number } =>

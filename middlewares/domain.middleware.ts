@@ -12,7 +12,6 @@ export const checkDomain = async (req: Request, res: Response, next: NextFunctio
     if(referer.includes(domain)) {
       next();
       return;
-      
     }
   }
 

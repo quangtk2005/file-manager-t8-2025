@@ -134,12 +134,12 @@ const changeFilename = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.changeFilename = changeFilename;
 const createFolder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name_folder, folder_path } = req.body;
-    const folderDir = path_1.default.join(__dirname, "..", folder_path, name_folder);
     try {
+        const folderDir = path_1.default.join(__dirname, "..", folder_path, name_folder.trim().replace(/\s+/g, ' '));
         if (fs_1.default.existsSync(folderDir)) {
             return res.json({
                 success: false,
-                message: "Thư mục đã tồn tại!"
+                message: "Thư mục đã tồn tại"
             });
         }
         fs_1.default.mkdirSync(folderDir);
@@ -151,7 +151,7 @@ const createFolder = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     catch (error) {
         return res.json({
             success: false,
-            message: "Lỗi khi tạo thư mục!"
+            message: "Lỗi khi tạo thư mục"
         });
     }
 });
